@@ -1,0 +1,115 @@
+2024-11-23 10:02:09 | INFO | Starting analysis for TROYUSDT
+2024-11-23 10:02:09 | INFO | Update interval: 10 seconds
+2024-11-23 10:02:09 | INFO | Using live trading
+2024-11-23 10:02:10 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:02:20 | INFO | Retrieved 1440 data points
+2024-11-23 10:02:20 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:02:20 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:02:40 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:02:52 | INFO | Retrieved 1440 data points
+2024-11-23 10:02:52 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:02:52 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:03:17 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:03:29 | INFO | Retrieved 1440 data points
+2024-11-23 10:03:29 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:03:29 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:03:53 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:04:04 | INFO | Retrieved 1440 data points
+2024-11-23 10:04:04 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:04:04 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:04:27 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:04:39 | INFO | Retrieved 1440 data points
+2024-11-23 10:04:39 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:04:39 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:05:03 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:05:15 | INFO | Retrieved 1440 data points
+2024-11-23 10:05:15 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:05:15 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:05:33 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:05:45 | INFO | Retrieved 1440 data points
+2024-11-23 10:05:45 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:05:45 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:06:07 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:06:17 | INFO | Starting analysis for TROYUSDT
+2024-11-23 10:06:17 | INFO | Update interval: 10 seconds
+2024-11-23 10:06:17 | INFO | Using live trading
+2024-11-23 10:06:18 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:06:30 | INFO | Retrieved 1440 data points
+2024-11-23 10:06:30 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:06:30 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:06:55 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:07:08 | INFO | Retrieved 1440 data points
+2024-11-23 10:07:08 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:07:08 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:07:27 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:07:39 | INFO | Retrieved 1440 data points
+2024-11-23 10:07:39 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:07:39 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:08:01 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:08:13 | INFO | Retrieved 1440 data points
+2024-11-23 10:08:13 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:08:13 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:08:32 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:08:44 | INFO | Retrieved 1440 data points
+2024-11-23 10:08:44 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:08:44 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:08:56 | INFO | Starting analysis for TROYUSDT
+2024-11-23 10:08:56 | INFO | Update interval: 10 seconds
+2024-11-23 10:08:56 | INFO | Using live trading
+2024-11-23 10:08:57 | INFO | [32m✓ Binance client initialized successfully[0m
+2024-11-23 10:08:57 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:09:09 | INFO | Retrieved 1440 data points
+2024-11-23 10:09:09 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:09:09 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:09:26 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:09:38 | INFO | Retrieved 1440 data points
+2024-11-23 10:09:38 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:09:38 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:10:02 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:10:14 | INFO | Retrieved 1440 data points
+2024-11-23 10:10:14 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:10:14 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:10:32 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:10:44 | INFO | Retrieved 1440 data points
+2024-11-23 10:10:44 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:10:44 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:11:04 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:11:16 | INFO | Retrieved 1440 data points
+2024-11-23 10:11:16 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:11:16 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:11:36 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:11:49 | INFO | Retrieved 1440 data points
+2024-11-23 10:11:49 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:11:49 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:12:07 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:12:19 | INFO | Retrieved 1440 data points
+2024-11-23 10:12:19 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:12:19 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:12:37 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:12:49 | INFO | Retrieved 1440 data points
+2024-11-23 10:12:49 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:12:49 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:13:07 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:13:18 | INFO | Retrieved 1440 data points
+2024-11-23 10:13:18 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:13:18 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:13:42 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:13:54 | INFO | Retrieved 1440 data points
+2024-11-23 10:13:54 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:13:54 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:14:19 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:14:31 | INFO | Retrieved 1440 data points
+2024-11-23 10:14:31 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:14:31 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:14:55 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:15:07 | INFO | Retrieved 1440 data points
+2024-11-23 10:15:07 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:15:07 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:15:31 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:15:41 | INFO | Retrieved 1440 data points
+2024-11-23 10:15:41 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:15:41 | INFO | Calculating metrics using 8635 intervals
+2024-11-23 10:16:04 | INFO | Fetching historical data for TROYUSDT...
+2024-11-23 10:16:15 | INFO | Retrieved 1440 data points
+2024-11-23 10:16:15 | INFO | Successfully processed 8635 10-second intervals
+2024-11-23 10:16:15 | INFO | Calculating metrics using 8635 intervals
