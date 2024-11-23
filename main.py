@@ -1,167 +1,209 @@
 import logging
-from binance.client import Client
-from binance.exceptions import BinanceAPIException
-import pandas as pd
-import numpy as np
-import config
 import time
-from typing import Optional, Dict, Any
-import colorama
-from colorama import Fore, Style
-import asyncio
+import numpy as np
+import pandas as pd
+from datetime import datetime
+from binance import ThreadedWebsocketManager
+from binance.client import Client
+import config
 import argparse
-import signal
-import sys
-from typing import NoReturn
-import sys
-import locale
-import io
 
-# Set console encoding to UTF-8
-if sys.platform.startswith('win'):
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
-
-# Initialize colorama for colored terminal output
-colorama.init()
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 
-class CryptoVolumeAnalyzer:
-    def __init__(self, api_key: str, api_secret: str, testnet: bool = True):
-        # ... existing init code ...
-        self.data_cache = None
-        self.last_cache_update = 0
-        self.cache_validity = 10  # seconds
-
-    async def get_data(self, symbol: str) -> Optional[pd.DataFrame]:
-        """Get data with caching"""
-        now = time.time()
-        if (self.data_cache is not None and
-                now - self.last_cache_update < self.cache_validity):
-            return self.data_cache
-
-        data = await self.fetch_historical_data(symbol)
-        if data is not None:
-            self.data_cache = data
-            self.last_cache_update = now
-        return data
-
-
-class ConfigurationError(Exception):
-    """Custom exception for configuration errors"""
-    pass
-
-
-def setup_logging() -> None:
-    """Configure logging settings"""
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s | %(levelname)s | %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-            logging.FileHandler('crypto_analysis.log', encoding='utf-8')  # Add encoding here
-        ]
-    )
-
-
-def parse_arguments() -> argparse.Namespace:
-    """Parse command line arguments"""
-    parser = argparse.ArgumentParser(description='Crypto Volume Analysis Tool')
-    parser.add_argument('symbol', nargs='?', default='TROYUSDT',
-                        help='Trading pair symbol (default: TROYUSDT)')
-    parser.add_argument('--interval', type=int, default=10,
-                        help='Update interval in seconds (default: 10)')
-    parser.add_argument('--test', action='store_true',
-                        help='Use testnet instead of live trading')
-    return parser.parse_args()
-
-
-def validate_config() -> None:
-    """Validate configuration settings"""
-    required_configs = ['API_KEY', 'API_SECRET']
-
-    for config_item in required_configs:
-        if not hasattr(config, config_item) or getattr(config, config_item) is None:
-            raise ConfigurationError(f"Missing required configuration: {config_item}")
-
-
-class CryptoAnalysisApp:
+class VolumeAnalysis:
     def __init__(self):
-        self.analyzer = None
-        self.running = False
+        # Matches:
+        # var float cnv_daily = 0.0
+        # var float cnv_dailyr = 0.0
+        # var int last_day = na
+        self.cnv_daily = 0.0
+        self.cnv_dailyr = 0.0
+        self.last_day = None
 
-    def signal_handler(self, signum: int, frame) -> None:
-        """Handle interrupt signals"""
-        print("\nReceived interrupt signal. Shutting down gracefully...")
-        self.running = False
+        # Matches: Length = input(2)
+        self.length = 2
+        self.prev_close = None
+        self.values = []
 
-    async def run(self, symbol: str, interval: int, use_testnet: bool) -> None:
-        """
-        Run the main application loop
+    def calculate_change(self, current_close):
+        # Matches: ta.change(srcc)
+        if self.prev_close is None:
+            return 0
+        return current_close - self.prev_close
 
-        Args:
-            symbol (str): Trading pair to monitor
-            interval (int): Update interval in seconds
-            use_testnet (bool): Whether to use testnet
-        """
+    def process_data(self, timestamp, close, open_price, volume):
+        # Matches:
+        # cnv_daily := last_day != dayofweek(time) ? 0 : cnv_daily
+        # cnv_dailyr := last_day != dayofweek(time) ? 0 : cnv_dailyr
+        # last_day := dayofweek(time)
+        current_day = pd.Timestamp(timestamp).dayofweek
+        if self.last_day != current_day:
+            self.cnv_daily = 0
+            self.cnv_dailyr = 0
+        self.last_day = current_day
+
+        # Matches: srcc = close
+        srcc = close
+
+        # Matches: change_1 = ta.change(srcc)
+        change_1 = self.calculate_change(srcc)
+
+        # Matches:
+        # nv = ta.change(srcc) > 0 ? math.abs(volume * close) : change_1 < 0 ? -volume * math.abs(close) : 0 * volume
+        if change_1 > 0:
+            nv = abs(volume * close)
+        elif change_1 < 0:
+            nv = -volume * abs(close)
+        else:
+            nv = 0 * volume
+
+        # Matches: aa = (close - close[1]) / (close)
+        aa = (close - (self.prev_close if self.prev_close is not None else close)) / close
+
+        # Matches: bb = (close - open) / (close)
+        bb = (close - open_price) / close
+
+        # Matches: nvol = math.sign(ta.change(close)) * volume * math.abs(close)
+        nvol = np.sign(change_1) * volume * abs(close)
+
+        # Store current close for next iteration
+        self.prev_close = close
+
+        return {
+            'timestamp': timestamp,
+            'cnv_daily': self.cnv_daily,
+            'cnv_dailyr': self.cnv_dailyr,
+            'current_day': current_day,
+            'change_1': change_1,
+            'nv': nv,
+            'aa': aa,
+            'bb': bb,
+            'nvol': nvol
+        }
+
+
+class BinanceDataStream:  # Changed class name to match your error
+    def __init__(self, symbol="TROYUSDT"):
+        logging.info(f"Initializing BinanceStream for {symbol}...")
+        self.client = Client(config.API_KEY, config.API_SECRET)
+        self.symbol = symbol.lower()
+        self.twm = ThreadedWebsocketManager(api_key=config.API_KEY, api_secret=config.API_SECRET)
+        self.volume_analyzer = VolumeAnalysis()
+
+        self.current_bar = {
+            'timestamp': None,
+            'open': None,
+            'high': None,
+            'low': None,
+            'close': None,
+            'volume': 0.0
+        }
+
+    def process_message(self, msg):
         try:
-            # Initialize analyzer
-            self.analyzer = CryptoVolumeAnalyzer(
-                api_key=config.API_KEY,
-                api_secret=config.API_SECRET,
-                testnet=use_testnet
+            timestamp = datetime.fromtimestamp(msg['T'] / 1000)
+            price = float(msg['p'])
+            quantity = float(msg['q'])
+
+            current_time = int(msg['T'] / 1000)
+            bar_start_time = (current_time // 10) * 10
+
+            if self.current_bar['timestamp'] is None:
+                self.start_new_bar(bar_start_time, price)
+            elif bar_start_time > self.current_bar['timestamp']:
+                self.close_current_bar()
+                self.start_new_bar(bar_start_time, price)
+
+            self.update_bar(price, quantity)
+
+        except Exception as e:
+            logging.error(f"Error processing message: {e}")
+
+    def start_new_bar(self, timestamp, price):
+        self.current_bar = {
+            'timestamp': timestamp,
+            'open': price,
+            'high': price,
+            'low': price,
+            'close': price,
+            'volume': 0.0
+        }
+        logging.debug(f"New bar started at {timestamp}")
+
+    def update_bar(self, price, quantity):
+        self.current_bar['high'] = max(self.current_bar['high'], price)
+        self.current_bar['low'] = min(self.current_bar['low'], price)
+        self.current_bar['close'] = price
+        self.current_bar['volume'] += quantity
+
+    def close_current_bar(self):
+        if self.current_bar['timestamp'] is not None:
+            timestamp = datetime.fromtimestamp(self.current_bar['timestamp'])
+
+            result = self.volume_analyzer.process_data(
+                timestamp=timestamp,
+                close=self.current_bar['close'],
+                open_price=self.current_bar['open'],
+                volume=self.current_bar['volume']
             )
 
-            # Start monitoring
-            self.running = True
-            await self.analyzer.monitor_trading_pair(symbol, interval)
+            logging.info(f"""
+=== Bar Completed at {timestamp} ===
+Symbol: {self.symbol.upper()}
+Price: {self.current_bar['close']}
+Volume: {self.current_bar['volume']}
+CNV Daily: {result['cnv_daily']:.8f}
+CNV Daily R: {result['cnv_dailyr']:.8f}
+Change: {result['change_1']:.8f}
+NV: {result['nv']:.8f}
+AA: {result['aa']:.8f}
+BB: {result['bb']:.8f}
+NVOL: {result['nvol']:.8f}
+Day of Week: {result['current_day']}
+============================
+            """)
 
-        except KeyboardInterrupt:
-            print("\nShutting down by user request...")
-        except Exception as e:
-            logging.error(f"Application error: {e}")
-            raise
-        finally:
-            self.cleanup()
-
-    def cleanup(self) -> None:
-        """Perform cleanup operations"""
-        self.running = False
-        logging.info("Cleanup completed")
+    def start(self):  # Added start method
+        logging.info("Starting WebSocket stream...")
+        self.twm.start()
+        self.twm.start_trade_socket(
+            symbol=self.symbol,
+            callback=self.process_message
+        )
+        logging.info("WebSocket stream started successfully")
 
 
-async def main() -> NoReturn:
-    """Main program execution"""
+def main():
+    parser = argparse.ArgumentParser(description='Binance trading pair analysis')
+    parser.add_argument('--symbol', type=str, default='TROYUSDT',
+                        help='Trading pair symbol (default: TROYUSDT)')
+
+    args = parser.parse_args()
+    symbol = args.symbol.upper()
+
+    logging.info(f"Starting analysis for {symbol}")
+
     try:
-        # Setup
-        setup_logging()
-        args = parse_arguments()
-        validate_config()
+        stream = BinanceDataStream(symbol)  # Updated class name
+        stream.start()  # Updated method name
 
-        # Log startup information
-        logging.info(f"Starting analysis for {args.symbol}")
-        logging.info(f"Update interval: {args.interval} seconds")
-        logging.info(f"Using {'testnet' if args.test else 'live'} trading")
+        while True:
+            time.sleep(1)
 
-        # Initialize and run application
-        app = CryptoAnalysisApp()
-
-        # Set up signal handlers
-        signal.signal(signal.SIGINT, app.signal_handler)
-        signal.signal(signal.SIGTERM, app.signal_handler)
-
-        # Run the application
-        await app.run(args.symbol, args.interval, args.test)
-
-    except ConfigurationError as e:
-        logging.error(f"Configuration error: {e}")
-        sys.exit(1)
+    except KeyboardInterrupt:
+        logging.info("Shutting down gracefully...")
+        stream.twm.stop()
     except Exception as e:
-        logging.error(f"Fatal error: {e}")
-        sys.exit(1)
+        logging.error(f"Error in main loop: {e}")
+        if 'stream' in locals():
+            stream.twm.stop()
 
 
 if __name__ == "__main__":
-    # Run the async main function
-    asyncio.run(main())
+    main()
